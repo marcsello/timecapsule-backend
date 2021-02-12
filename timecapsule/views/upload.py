@@ -9,7 +9,7 @@ from schemas import UploadSchema
 from utils import form_required
 
 class UploadView(FlaskView):
-    upload_schema = UploadSchema(many=False)
+    upload_schema = UploadSchema(many=False, exclude=['text'])
 
     @staticmethod
     def __get_and_sanitize_and_check_text(field: str) -> str:
