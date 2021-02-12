@@ -8,7 +8,7 @@ from sentry_sdk.integrations.sqlalchemy import SqlalchemyIntegration
 from flask_cors import CORS
 
 from model import db
-from utils import register_all_error_handlers
+from utils import register_all_error_handlers, rechaptcha
 
 from views import UploadView
 
@@ -27,7 +27,7 @@ if Config.SENTRY_DSN:
 db.init_app(app)
 register_all_error_handlers(app)
 CORS(app)
-
+rechaptcha.init_app(app)
 
 @app.before_first_request
 def init_db():

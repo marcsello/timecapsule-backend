@@ -16,3 +16,6 @@ class Config:
     RELEASEMODE = os.environ.get("RELEASEMODE", "dev")
 
     MAX_CONTENT_LENGTH = 512 * 1024 * 1024
+
+    RECAPTCHA_SITE_KEY = os.environ.get("RECAPTCHA_SITE_KEY")
+    RECAPTCHA_SECRET_KEY = os.environ.get("RECAPTCHA_SECRET_KEY")

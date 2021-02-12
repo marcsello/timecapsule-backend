@@ -6,7 +6,8 @@ import bleach
 
 from model import db, Upload
 from schemas import UploadSchema
-from utils import form_required
+from utils import form_required, rechaptcha
+
 
 class UploadView(FlaskView):
     upload_schema = UploadSchema(many=False, exclude=['text'])
@@ -26,6 +27,9 @@ class UploadView(FlaskView):
 
     @form_required
     def post(self):
+        if not rechaptcha.verify():
+            abort(422, "reCAPTCHA validation failed!")
+
         name = self.__get_and_sanitize_and_check_text('name')
         address = self.__get_and_sanitize_and_check_text('address')
         text = self.__get_and_sanitize_and_check_text('text')
