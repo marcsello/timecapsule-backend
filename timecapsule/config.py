@@ -19,3 +19,5 @@ class Config:
 
     RECAPTCHA_SITE_KEY = os.environ.get("RECAPTCHA_SITE_KEY")
     RECAPTCHA_SECRET_KEY = os.environ.get("RECAPTCHA_SECRET_KEY")
+
+    LOCAL_API_KEY = os.environ.get('LOCAL_API_KEY')

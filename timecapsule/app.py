@@ -29,6 +29,7 @@ register_all_error_handlers(app)
 CORS(app)
 rechaptcha.init_app(app)
 
+
 @app.before_first_request
 def init_db():
     db.create_all()
