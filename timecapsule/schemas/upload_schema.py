@@ -16,7 +16,7 @@ class UploadSchema(ModelSchema):
     def get_text_length(self, upload: Upload) -> int:
         return len(upload.text)
 
-    def get_attachment_url(self):
+    def get_attachment_url(self, upload: Upload):
         return "TODO"
 
     class Meta:

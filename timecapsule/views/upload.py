@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 from flask import request, abort, jsonify
+from werkzeug.utils import secure_filename
 from flask_classful import FlaskView
 
 import bleach
+import hashlib
 
 from model import db, Upload
 from schemas import UploadSchema
@@ -38,10 +40,20 @@ class UploadView(FlaskView):
         address = self.__get_and_sanitize_and_check_text('address')
         text = self.__get_and_sanitize_and_check_text('text')
 
+        attachment_original_filename = None
+        attachment_hash = None
+        if 'attachment' in request.files:
+            attachment = request.files['attachment']
+
+            attachment_original_filename = secure_filename(attachment.filename)
+            attachment_hash = hashlib.md5(attachment.read()).hexdigest()
+
         u = Upload(
             name=name,
             address=address,
-            text=text
+            text=text,
+            attachment_hash=attachment_hash,
+            attachment_original_filename=attachment_original_filename
         )
 
         db.session.add(u)
