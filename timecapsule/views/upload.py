@@ -10,9 +10,11 @@ from utils import form_required, rechaptcha, apikey_required
 
 
 class UploadView(FlaskView):
-    upload_schema_light = UploadSchema(many=False, exclude=['text'])
-    upload_schema_list = UploadSchema(many=True, exclude=['text'])
-    upload_schema = UploadSchema(many=False)
+    uploads_schema_simple = UploadSchema(many=True, exclude=['text', 'attachment_original_filename', 'attachment_hash',
+                                                             'attachment_url'])
+    upload_schema_simple = UploadSchema(many=False, exclude=['text', 'attachment_original_filename', 'attachment_hash',
+                                                             'attachment_url'])
+    upload_schema_full = UploadSchema(many=False)
 
     @staticmethod
     def __get_and_sanitize_and_check_text(field: str) -> str:
@@ -45,14 +47,14 @@ class UploadView(FlaskView):
         db.session.add(u)
         db.session.commit()
 
-        return jsonify(self.upload_schema_light.dump(u)), 201
+        return jsonify(self.upload_schema_simple.dump(u)), 201
 
     @apikey_required
     def index(self):
         uploads = Upload.query.all()
-        return jsonify(self.upload_schema_list.dump(uploads)), 200
+        return jsonify(self.uploads_schema_simple.dump(uploads)), 200
 
     @apikey_required
     def get(self, id_: int):
         upload = Upload.query.get_or_404(id_)
-        return jsonify(self.upload_schema.dump(upload)), 200
+        return jsonify(self.upload_schema_full.dump(upload)), 200
