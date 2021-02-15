@@ -31,7 +31,9 @@ class UploadView(FlaskView):
 
         return cleantext
 
-    @form_required
+    # @form_required # Using this decorator would mean that the form data is being parsed before the request is handled
+    # This is not a problem unto itself, but long file uploads could cause reChaptcha to time out
+    # So we want to validate reChaptcha as fast as possible, and parse the formData later
     def post(self):
 
         # Chaptcha response is moved to header so it can be parsed quickly before the formdata is being parsed
@@ -44,6 +46,10 @@ class UploadView(FlaskView):
             abort(422, "reCAPTCHA validation failed!")
 
         # Start parsing the form data from here -----
+
+        if not request.form:
+            abort(400, "Form Data required")
+
         name = self.__get_and_sanitize_and_check_text('name')
         address = self.__get_and_sanitize_and_check_text('address')
         text = self.__get_and_sanitize_and_check_text('text')
