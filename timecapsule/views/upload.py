@@ -33,9 +33,17 @@ class UploadView(FlaskView):
 
     @form_required
     def post(self):
-        if not rechaptcha.verify():
+
+        # Chaptcha response is moved to header so it can be parsed quickly before the formdata is being parsed
+        rechaptcha_response = request.headers.get('X-G-Recaptcha-Response')
+
+        if not rechaptcha_response:
+            abort(422, "Missing reCAPTCHA response! (should be provided as a header)")
+
+        if not rechaptcha.verify(response=rechaptcha_response):
             abort(422, "reCAPTCHA validation failed!")
 
+        # Start parsing the form data from here -----
         name = self.__get_and_sanitize_and_check_text('name')
         address = self.__get_and_sanitize_and_check_text('address')
         text = self.__get_and_sanitize_and_check_text('text')
