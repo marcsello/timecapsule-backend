@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
-from flask import request, abort, jsonify
+import os
+import os.path
+from flask import request, abort, jsonify, current_app
 from werkzeug.utils import secure_filename
 from flask_classful import FlaskView
 
@@ -59,8 +61,23 @@ class UploadView(FlaskView):
         if 'attachment' in request.files:
             attachment = request.files['attachment']
 
-            attachment_original_filename = secure_filename(attachment.filename)
+            attachment_original_filename = secure_filename(os.path.basename(attachment.filename))
             attachment_hash = hashlib.md5(attachment.read()).hexdigest()
+            # MD5 calculating read the file to the end, so we have to seek back to it's beginning to actually save it
+            attachment.seek(0, 0)
+
+            # ensure a containing directory
+            target_dir = current_app.config["UPLOAD_FOLDER"]
+            os.makedirs(target_dir, 0o755, exist_ok=True)
+
+            # Save file
+            target_file_extension = os.path.splitext(attachment_original_filename)[-1]
+            # We don't want filenames ending with a dot
+            if target_file_extension == '.':
+                target_file_extension = ''
+
+            target_filename = os.path.join(target_dir, attachment_hash + target_file_extension)
+            attachment.save(target_filename)
 
         u = Upload(
             name=name,
