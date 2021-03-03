@@ -58,11 +58,13 @@ class UploadView(FlaskView):
 
         attachment_original_filename = None
         attachment_hash = None
+        attachment_size = None
         if 'attachment' in request.files:
             attachment = request.files['attachment']
 
             attachment_original_filename = secure_filename(os.path.basename(attachment.filename))
             attachment_hash = hashlib.md5(attachment.read()).hexdigest()
+            attachment_size = attachment.tell()
             # MD5 calculating read the file to the end, so we have to seek back to it's beginning to actually save it
             attachment.seek(0, 0)
 
@@ -77,14 +79,18 @@ class UploadView(FlaskView):
                 target_file_extension = ''
 
             target_filename = os.path.join(target_dir, attachment_hash + target_file_extension)
-            attachment.save(target_filename)
+            attachment_duplicate = os.path.isfile(target_filename)
+
+            if not attachment_duplicate:
+                attachment.save(target_filename)
 
         u = Upload(
             name=name,
             address=address,
             text=text,
             attachment_hash=attachment_hash,
-            attachment_original_filename=attachment_original_filename
+            attachment_original_filename=attachment_original_filename,
+            attachment_size=attachment_size
         )
 
         db.session.add(u)

@@ -14,3 +14,4 @@ class Upload(db.Model):
 
     attachment_original_filename = db.Column(db.String(32), nullable=True, default=None)
     attachment_hash = db.Column(db.String(32), nullable=True, default=None)
+    attachment_size = db.Column(db.BigInteger, nullable=True, default=None)
