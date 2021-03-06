@@ -5,12 +5,12 @@ from flask import request, abort, jsonify, current_app
 from werkzeug.utils import secure_filename
 from flask_classful import FlaskView
 
-import bleach
 import hashlib
 
 from model import db, Upload
 from schemas import UploadSchema
-from utils import form_required, rechaptcha, apikey_required
+from utils import rechaptcha, apikey_required
+from marshmallow.exceptions import ValidationError
 
 
 class UploadView(FlaskView):
@@ -19,19 +19,6 @@ class UploadView(FlaskView):
     upload_schema_simple = UploadSchema(many=False, exclude=['text', 'attachment_original_filename', 'attachment_hash',
                                                              'attachment_url'])
     upload_schema_full = UploadSchema(many=False)
-
-    @staticmethod
-    def __get_and_sanitize_and_check_text(field: str) -> str:
-        maxlen = getattr(Upload, field).property.columns[0].type.length
-
-        cleantext = request.form.get(field, '')
-        cleantext = cleantext[:maxlen]
-        cleantext = bleach.clean(cleantext, tags=[])
-
-        if not cleantext:
-            abort(422, "A required field is empty!")
-
-        return cleantext
 
     # @form_required # Using this decorator would mean that the form data is being parsed before the request is handled
     # This is not a problem unto itself, but long file uploads could cause reChaptcha to time out
@@ -52,13 +39,13 @@ class UploadView(FlaskView):
         if not request.form:
             abort(400, "Form Data required")
 
-        name = self.__get_and_sanitize_and_check_text('name')
-        address = self.__get_and_sanitize_and_check_text('address')
-        text = self.__get_and_sanitize_and_check_text('text')
+        params = request.form.to_dict(flat=True)
+        try:
+            u = self.upload_schema_full.load(params, session=db.session)
+        except ValidationError as e:
+            abort(422, str(e))
 
-        attachment_original_filename = None
-        attachment_hash = None
-        attachment_size = None
+        # Handle attachement if needed
         if 'attachment' in request.files:
             attachment = request.files['attachment']
 
@@ -84,15 +71,11 @@ class UploadView(FlaskView):
             if not attachment_duplicate:
                 attachment.save(target_filename)
 
-        u = Upload(
-            name=name,
-            address=address,
-            text=text,
-            attachment_hash=attachment_hash,
-            attachment_original_filename=attachment_original_filename,
-            attachment_size=attachment_size
-        )
+            u.attachment_hash = attachment_hash
+            u.attachment_original_filename = attachment_original_filename
+            u.attachment_size = attachment_size
 
+        # Save stuff to database
         db.session.add(u)
         db.session.commit()
 
