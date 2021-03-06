@@ -9,7 +9,7 @@ import hashlib
 
 from model import db, Upload
 from schemas import UploadSchema
-from utils import rechaptcha, apikey_required
+from utils import rechaptcha_required, apikey_required, form_required
 from marshmallow.exceptions import ValidationError
 
 
@@ -20,24 +20,9 @@ class UploadView(FlaskView):
                                                              'attachment_url'])
     upload_schema_full = UploadSchema(many=False)
 
-    # @form_required # Using this decorator would mean that the form data is being parsed before the request is handled
-    # This is not a problem unto itself, but long file uploads could cause reChaptcha to time out
-    # So we want to validate reChaptcha as fast as possible, and parse the formData later
+    @rechaptcha_required
+    @form_required
     def post(self):
-
-        # Chaptcha response is moved to header so it can be parsed quickly before the formdata is being parsed
-        rechaptcha_response = request.headers.get('X-G-Recaptcha-Response')
-
-        if not rechaptcha_response:
-            abort(422, "Missing reCAPTCHA response! (should be provided as a header)")
-
-        if not rechaptcha.verify(response=rechaptcha_response):
-            abort(422, "reCAPTCHA validation failed!")
-
-        # Start parsing the form data from here -----
-
-        if not request.form:
-            abort(400, "Form Data required")
 
         params = request.form.to_dict(flat=True)
         try:
