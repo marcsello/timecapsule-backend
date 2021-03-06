@@ -1,13 +1,34 @@
+# Flask stuff
 Flask~=1.1.2
+Werkzeug~=1.0.1
 blinker~=1.4
-Flask-ReCaptcha~=0.4.2
+
+# SQLAlchemy stuff
 SQLAlchemy~=1.3.23
-tzlocal~=2.1
-sentry_sdk~=0.20.3
 Flask-SQLAlchemy~=2.4.4
-Flask-Cors~=3.0.10
-Flask-Classful~=0.14.2
+
+# Marshmallow stuff
+marshmallow~=3.10.0
 marshmallow-sqlalchemy~=0.24.2
 marshmallow-utils~=0.3.7
+
+# DB drivers
 psycopg2-binary~=2.8.6
 mysqlclient~=2.0.3
+
+# Misc flask addons
+Flask-ReCaptcha~=0.4.2
+Flask-Cors~=3.0.10
+Flask-Classful~=0.14.2
+
+# Sentry
+sentry_sdk~=0.20.3
+
+# Misc
+tzlocal~=2.1
+
+
+
+
+
+
