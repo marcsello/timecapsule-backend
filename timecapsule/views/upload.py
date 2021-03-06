@@ -14,10 +14,8 @@ from marshmallow.exceptions import ValidationError
 
 
 class UploadView(FlaskView):
-    uploads_schema_simple = UploadSchema(many=True, exclude=['text', 'attachment_original_filename', 'attachment_hash',
-                                                             'attachment_url'])
-    upload_schema_simple = UploadSchema(many=False, exclude=['text', 'attachment_original_filename', 'attachment_hash',
-                                                             'attachment_url'])
+    uploads_schema_simple = UploadSchema(many=True, exclude=['text', 'attachment_original_filename', 'attachment_hash'])
+    upload_schema_simple = UploadSchema(many=False, exclude=['text', 'attachment_original_filename', 'attachment_hash'])
     upload_schema_full = UploadSchema(many=False)
 
     @rechaptcha_required

@@ -10,7 +10,6 @@ from model import Upload
 class UploadSchema(ModelSchema):
     have_attachment = fields.Method("get_have_attachment", dump_only=True)
     text_length = fields.Method("get_text_length", dump_only=True)
-    attachment_url = fields.Method("get_attachment_url", dump_only=True)
 
     email = fields.Email()
     phone = fields.String(validate=Regexp("^\+?[0-9]{6,13}$"))
@@ -24,9 +23,6 @@ class UploadSchema(ModelSchema):
 
     def get_text_length(self, upload: Upload) -> int:
         return len(upload.text)
-
-    def get_attachment_url(self, upload: Upload):
-        return "TODO"
 
     class Meta:
         model = Upload
