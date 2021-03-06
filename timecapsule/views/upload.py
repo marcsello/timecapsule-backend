@@ -50,7 +50,7 @@ class UploadView(FlaskView):
             if target_file_extension == '.':
                 target_file_extension = ''
 
-            target_filename = os.path.join(target_dir, attachment_hash + target_file_extension)
+            target_filename = os.path.join(target_dir, f"{attachment_hash}_{attachment_size}{target_file_extension}")
             attachment_duplicate = os.path.isfile(target_filename)
 
             if not attachment_duplicate:
