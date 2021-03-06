@@ -12,7 +12,7 @@ class UploadSchema(ModelSchema):
     text_length = fields.Method("get_text_length", dump_only=True)
 
     email = fields.Email()
-    phone = fields.String(validate=Regexp("^\+?[0-9]{6,13}$"))
+    phone = fields.String(validate=Regexp(r"^\+?[0-9]{6,13}$"))
 
     text = SanitizedHTML(tags=[], attrs=[])
     address = SanitizedHTML(tags=[], attrs=[])
