@@ -15,7 +15,7 @@ class Upload(db.Model):
 
     upload_date = db.Column(db.TIMESTAMP, nullable=False, server_default=func.now())
 
-    text = db.Column(db.Text(2 * 1024 * 1024), nullable=False)  # 2MB maximum
+    text = db.Column(db.Text, nullable=False)
 
     attachment_original_filename = db.Column(db.String(32), nullable=True, default=None)
     attachment_hash = db.Column(db.String(32), nullable=True, default=None)

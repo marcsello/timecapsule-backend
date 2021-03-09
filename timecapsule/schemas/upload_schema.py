@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 from marshmallow_sqlalchemy import ModelSchema
 from marshmallow import fields
-from marshmallow.validate import Regexp
+from marshmallow.validate import Regexp, Length
 from marshmallow_utils.fields import SanitizedHTML
 
 from model import Upload
@@ -14,7 +14,7 @@ class UploadSchema(ModelSchema):
     email = fields.Email()
     phone = fields.String(validate=Regexp(r"^\+?[0-9]{6,13}$"))
 
-    text = SanitizedHTML(tags=[], attrs=[])
+    text = SanitizedHTML(validate=Length(max=(2 * 1024 * 1024)), tags=[], attrs=[])  # ~2MB (or a lot more bc UTF-8)
     address = SanitizedHTML(tags=[], attrs=[])
     name = SanitizedHTML(tags=[], attrs=[])
 
