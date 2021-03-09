@@ -11,6 +11,6 @@ services:
 
 script:
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-  - docker build -t $DOCKER_USERNAME/timecapsule:$TRAVIS_BUILD_NUMBER .
+  - docker build --build-arg RELEASE_ID=$TRAVIS_BUILD_NUMBER -t $DOCKER_USERNAME/timecapsule:$TRAVIS_BUILD_NUMBER .
   - docker tag $DOCKER_USERNAME/timecapsule:$TRAVIS_BUILD_NUMBER $DOCKER_USERNAME/timecapsule:latest
   - docker push $DOCKER_USERNAME/timecapsule # push all tags
