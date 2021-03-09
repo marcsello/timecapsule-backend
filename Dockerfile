@@ -1,4 +1,4 @@
-FROM python:3
+FROM python:3.9
 
 ADD timecapsule requirements.txt /timecapsule/
 WORKDIR /timecapsule/
@@ -9,5 +9,6 @@ ARG RELEASE_ID
 ENV RELEASE_ID ${RELEASE_ID:-""}
 
 EXPOSE 8000
+USER www-data
 CMD ["gunicorn", "-t", "7200", "-w", "4", "-b", "0.0.0.0:8000", "app:app"]
 
