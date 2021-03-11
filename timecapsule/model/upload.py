@@ -16,7 +16,3 @@ class Upload(db.Model):
     upload_date = db.Column(db.TIMESTAMP, nullable=False, server_default=func.now())
 
     text = db.Column(db.Text, nullable=False)
-
-    attachment_original_filename = db.Column(db.String(255), nullable=True, default=None)  # limits.h NAME_MAX
-    attachment_hash = db.Column(db.String(32), nullable=True, default=None)
-    attachment_size = db.Column(db.BigInteger, nullable=True, default=None)
