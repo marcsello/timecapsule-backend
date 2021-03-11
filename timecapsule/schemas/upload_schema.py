@@ -19,7 +19,7 @@ class UploadSchema(ModelSchema):
     name = SanitizedHTML(tags=[], attrs=[])
 
     def get_have_attachment(self, upload: Upload) -> int:
-        return bool(upload.attachment_hash) and bool(upload.attachment_original_filename)
+        return bool(upload.files)  # backref
 
     def get_text_length(self, upload: Upload) -> int:
         return len(upload.text)
