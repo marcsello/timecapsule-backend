@@ -5,7 +5,7 @@ from marshmallow_utils.fields import SanitizedHTML
 from model import File
 
 
-class UploadSchema(ModelSchema):
+class FileSchema(ModelSchema):
     original_filename = SanitizedHTML(tags=[], attrs=[])
 
     class Meta:

@@ -5,6 +5,7 @@ from marshmallow.validate import Regexp, Length
 from marshmallow_utils.fields import SanitizedHTML
 
 from model import Upload
+from . import FileSchema
 
 
 class UploadSchema(ModelSchema):
@@ -17,6 +18,8 @@ class UploadSchema(ModelSchema):
     text = SanitizedHTML(validate=Length(max=(2 * 1024 * 1024)), tags=[], attrs=[])  # ~2MB (or a lot more bc UTF-8)
     address = SanitizedHTML(tags=[], attrs=[])
     name = SanitizedHTML(tags=[], attrs=[])
+
+    files = fields.Nested(FileSchema, many=True)
 
     def get_have_attachment(self, upload: Upload) -> int:
         return bool(upload.files)  # backref
