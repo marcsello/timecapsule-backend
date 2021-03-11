@@ -8,7 +8,7 @@ from model import Upload
 
 
 class UploadSchema(ModelSchema):
-    have_attachment = fields.Method("get_have_attachment", dump_only=True)
+    attachment_count = fields.Method("get_attachement_count", dump_only=True)
     text_length = fields.Method("get_text_length", dump_only=True)
 
     email = fields.Email()
@@ -20,8 +20,8 @@ class UploadSchema(ModelSchema):
 
     files = fields.Nested('FileSchema', many=True)
 
-    def get_have_attachment(self, upload: Upload) -> int:
-        return bool(upload.files)  # backref
+    def get_attachement_count(self, upload: Upload) -> int:
+        return len(upload.files)  # backref
 
     def get_text_length(self, upload: Upload) -> int:
         return len(upload.text)
