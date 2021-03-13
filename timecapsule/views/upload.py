@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import os
 import os.path
+from magic import Magic
 from flask import request, abort, jsonify, current_app
 from werkzeug.utils import secure_filename
 from flask_classful import FlaskView
@@ -41,6 +42,7 @@ class UploadView(FlaskView):
 
         # Handle attachments if needed
         files_to_save = []
+        m = Magic(mime=True)
         for field_name, attachment in request.files.items():
 
             original_filename = secure_filename(os.path.basename(attachment.filename))
@@ -51,6 +53,10 @@ class UploadView(FlaskView):
                 return abort(413, f"{field_name} is too big")
 
             # MD5 calculating read the file to the end, so we have to seek back to it's beginning to actually save it
+            attachment.seek(0, 0)
+
+            # https://stackoverflow.com/questions/8673407/how-many-bytes-are-required-for-accurate-mime-type-detection
+            mime = m.from_buffer(attachment.read(1024))
             attachment.seek(0, 0)
 
             # prepare file to be saved
@@ -74,7 +80,8 @@ class UploadView(FlaskView):
             file_params = {
                 'original_filename': original_filename,
                 'md5_hash': md5_hash,
-                'size': size
+                'size': size,
+                'mime': mime
             }
 
             try:
