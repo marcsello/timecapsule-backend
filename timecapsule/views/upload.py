@@ -55,8 +55,8 @@ class UploadView(FlaskView):
             # MD5 calculating read the file to the end, so we have to seek back to it's beginning to actually save it
             attachment.seek(0, 0)
 
-            # https://stackoverflow.com/questions/8673407/how-many-bytes-are-required-for-accurate-mime-type-detection
-            mime = m.from_buffer(attachment.read(1024))
+            # Apparently .doc requires to be fully read in order to being identified properly
+            mime = m.from_buffer(attachment.read())
             attachment.seek(0, 0)
 
             # prepare file to be saved
