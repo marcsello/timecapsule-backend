@@ -18,7 +18,7 @@ class UploadSchema(ModelSchema):
     address = SanitizedHTML(tags=[], attrs=[])
     name = SanitizedHTML(tags=[], attrs=[])
 
-    files = fields.Nested('FileSchema', many=True)
+    files = fields.Nested('FileSchema', many=True, exclude=['upload'])
 
     def get_attachement_count(self, upload: Upload) -> int:
         return len(upload.files)  # backref
