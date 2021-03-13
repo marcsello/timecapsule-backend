@@ -36,6 +36,7 @@ class UploadView(FlaskView):
             os.makedirs(current_app.config["UPLOAD_FOLDER"], 0o755, exist_ok=True)
 
         # Handle attachments if needed
+        files_to_save = []
         for field_name, attachment in request.files.items():
 
             original_filename = secure_filename(os.path.basename(attachment.filename))
@@ -58,7 +59,7 @@ class UploadView(FlaskView):
             attachment_duplicate = os.path.isfile(target_filepath)
 
             if not attachment_duplicate:
-                attachment.save(target_filepath)
+                files_to_save.append((attachment, target_filepath))
 
             file_params = {
                 'original_filename': original_filename,
@@ -73,6 +74,13 @@ class UploadView(FlaskView):
 
             f.upload = u
             db.session.add(f)
+
+        # All single validation succeeded so far
+        # But database constraints are not yet enforced
+        # We just save the files here, so that if saving fails, the data won't be committed to the db
+
+        for attachment, target_filepath in files_to_save:
+            attachment.save(target_filepath)
 
         # Commit all that stuff to database
         db.session.commit()
