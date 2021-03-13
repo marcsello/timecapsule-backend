@@ -15,7 +15,9 @@ class Config:
     RELEASE_ID = os.environ.get("RELEASE_ID", "test")
     RELEASEMODE = os.environ.get("RELEASEMODE", "dev")
 
-    MAX_CONTENT_LENGTH = int(os.environ.get("MAX_CONTENT_LENGTH", 512 * 1024 * 1024))
+    MAX_CONTENT_LENGTH = int(os.environ.get("MAX_CONTENT_LENGTH", (512 + 2 + 1) * 1024 * 1024))
+    MAX_SINGLE_FILE_LENGTH = int(os.environ.get("MAX_SINGLE_FILE_LENGTH", 10 * 1024 * 1024))
+    MAX_FILES_IN_UPLOAD = int(os.environ.get("MAX_FILES_IN_UPLOAD", 50))
 
     RECAPTCHA_SITE_KEY = os.environ.get("RECAPTCHA_SITE_KEY")
     RECAPTCHA_SECRET_KEY = os.environ.get("RECAPTCHA_SECRET_KEY")
