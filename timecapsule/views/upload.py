@@ -48,9 +48,12 @@ class UploadView(FlaskView):
                 size = attachment.tell()
 
                 if size > current_app.config['MAX_SINGLE_FILE_LENGTH']:
+                    # This could be moved to the schema checking as well,
+                    # But we don't want to process a big file any further to save resources
                     return abort(413, f"{field_name} is too big")
 
-                # MD5 calculating read the file to the end, so we have to seek back to it's beginning to actually save it
+                # MD5 calculating read the file to the end, (because .read())
+                # so we have to seek back to it's beginning to actually save it
                 attachment.seek(0, 0)
 
                 # Apparently .doc requires to be fully read in order to being identified properly
@@ -83,7 +86,8 @@ class UploadView(FlaskView):
                 try:
                     f = self.file_schema_full.load(file_params, session=db.session)
                 except ValidationError as e:
-                    return abort(422, f"{field_name}: {e}")  # This is not a return actually, I just want PyCharm to shut up
+                    # This is not a return actually, I just want PyCharm to stop complaining
+                    return abort(422, f"{field_name}: {e}")
 
                 f.upload = u
                 db.session.add(f)
