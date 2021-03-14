@@ -13,7 +13,7 @@ ALLOWED_TYPES = [
     'image/*',
 
     # types that are simple to check
-    'text/plain',
+    'text/*',  # <- a simple .txt file may contain stuff that looks like csv, ics, html whatever, this accepts them all
     'application/pdf',
     'application/vnd.oasis.opendocument.text',
 
