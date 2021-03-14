@@ -70,10 +70,8 @@ class UploadView(FlaskView):
                 f"{md5_hash}_{size}{target_file_extension}"
             )
 
-            attachment_duplicate = os.path.isfile(target_filepath)
-
-            if not attachment_duplicate:
-                files_to_save.append((attachment, target_filepath))
+            # Files will be saved later, after all validated successfully
+            files_to_save.append((attachment, target_filepath))
 
             # Store meta data
 
@@ -97,7 +95,8 @@ class UploadView(FlaskView):
         # We just save the files here, so that if saving fails, the data won't be committed to the db
 
         for attachment, target_filepath in files_to_save:
-            attachment.save(target_filepath)
+            if not os.path.isfile(target_filepath):
+                attachment.save(target_filepath)
 
         # Commit all that stuff to database
         db.session.commit()
