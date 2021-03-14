@@ -85,7 +85,7 @@ class UploadView(FlaskView):
             try:
                 f = self.file_schema_full.load(file_params, session=db.session)
             except ValidationError as e:
-                return abort(422, str(e))  # This is not a return actually, I just want PyCharm to shut up
+                return abort(422, f"{field_name}: {e}")  # This is not a return actually, I just want PyCharm to shut up
 
             f.upload = u
             db.session.add(f)
