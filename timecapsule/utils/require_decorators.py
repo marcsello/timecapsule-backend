@@ -55,7 +55,7 @@ def rechaptcha_required(f):
         rechaptcha_response = request.headers.get('X-G-Recaptcha-Response')
 
         if not rechaptcha_response:
-            abort(422, "Missing reCAPTCHA response! (should be provided as a header)")
+            abort(400, "Missing reCAPTCHA response! (should be provided as a header)")
 
         if not rechaptcha.verify(response=rechaptcha_response):
             abort(422, "reCAPTCHA validation failed!")
